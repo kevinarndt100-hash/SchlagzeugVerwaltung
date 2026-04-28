@@ -1,0 +1,23 @@
+<Window x:Class="SchlagzeugVerwaltung.SchuelerAuswahlWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Title="Schüler auswählen" Height="350" Width="400" Background="#1E1E1E" WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+  <Grid Margin="20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <TextBlock Grid.Row="0" Text="Schüler auswählen" Foreground="#FFFFFF" FontSize="18" FontWeight="Bold" Margin="0,0,0,15" />
+    <ListBox Name="SchuelerListBox" Grid.Row="1" Background="#2D2D2D" Foreground="#FFFFFF" BorderBrush="#3F3F3F" SelectionMode="Single">
+      <ItemsControl.ItemTemplate>
+        <DataTemplate>
+          <Border Background="#3C3C3C" CornerRadius="4" Padding="10" Margin="0,2">
+            <TextBlock Foreground="#FFFFFF" FontSize="14" Text="{Binding Name}" />
+          </Border>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
+    </ListBox>
+    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+      <Button Content="Abbrechen" Background="#3C3C3C" Foreground="#FFFFFF" Padding="15,8" Margin="0,0,10,0" BorderThickness="0" Cursor="Hand" Click="Abbrechen_Click" />
+      <Button Content="Auswählen" Background="#007ACC" Foreground="#FFFFFF" Padding="15,8" BorderThickness="0" Cursor="Hand" Click="Auswaehlen_Click" />
+    </StackPanel>
+  </Grid>
+</Window>

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="SchlagzeugVerwaltung.csproj" />
+  <Project Path="SchlagzeugVerwaltung.Tests/SchlagzeugVerwaltung.Tests.csproj" />
+</Solution>

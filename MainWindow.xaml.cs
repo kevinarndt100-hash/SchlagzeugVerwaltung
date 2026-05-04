@@ -29,9 +29,106 @@ public partial class MainWindow : Window
     private int _currentBeat;
     private int _selectedNoteValue = 4;
 
+    private void NavSchueler_Click(object sender, RoutedEventArgs e)
+    {
+        NavSchueler.Tag = "Active";
+        NavTermine.Tag = null;
+        NavMonat.Tag = null;
+        NavZahlungen.Tag = null;
+        NavWochennotizen.Tag = null;
+        NavDrum.Tag = null;
+        PageSchueler.Visibility = Visibility.Visible;
+        PageTermine.Visibility = Visibility.Collapsed;
+        PageMonat.Visibility = Visibility.Collapsed;
+        PageZahlungen.Visibility = Visibility.Collapsed;
+        PageWochennotizen.Visibility = Visibility.Collapsed;
+        PageDrum.Visibility = Visibility.Collapsed;
+    }
+
+    private void NavTermine_Click(object sender, RoutedEventArgs e)
+    {
+        NavSchueler.Tag = null;
+        NavTermine.Tag = "Active";
+        NavMonat.Tag = null;
+        NavZahlungen.Tag = null;
+        NavWochennotizen.Tag = null;
+        NavDrum.Tag = null;
+        PageSchueler.Visibility = Visibility.Collapsed;
+        PageTermine.Visibility = Visibility.Visible;
+        PageMonat.Visibility = Visibility.Collapsed;
+        PageZahlungen.Visibility = Visibility.Collapsed;
+        PageWochennotizen.Visibility = Visibility.Collapsed;
+        PageDrum.Visibility = Visibility.Collapsed;
+    }
+
+    private void NavMonat_Click(object sender, RoutedEventArgs e)
+    {
+        NavSchueler.Tag = null;
+        NavTermine.Tag = null;
+        NavMonat.Tag = "Active";
+        NavZahlungen.Tag = null;
+        NavWochennotizen.Tag = null;
+        NavDrum.Tag = null;
+        PageSchueler.Visibility = Visibility.Collapsed;
+        PageTermine.Visibility = Visibility.Collapsed;
+        PageMonat.Visibility = Visibility.Visible;
+        PageZahlungen.Visibility = Visibility.Collapsed;
+        PageWochennotizen.Visibility = Visibility.Collapsed;
+        PageDrum.Visibility = Visibility.Collapsed;
+    }
+
+    private void NavZahlungen_Click(object sender, RoutedEventArgs e)
+    {
+        NavSchueler.Tag = null;
+        NavTermine.Tag = null;
+        NavMonat.Tag = null;
+        NavZahlungen.Tag = "Active";
+        NavWochennotizen.Tag = null;
+        NavDrum.Tag = null;
+        PageSchueler.Visibility = Visibility.Collapsed;
+        PageTermine.Visibility = Visibility.Collapsed;
+        PageMonat.Visibility = Visibility.Collapsed;
+        PageZahlungen.Visibility = Visibility.Visible;
+        PageWochennotizen.Visibility = Visibility.Collapsed;
+        PageDrum.Visibility = Visibility.Collapsed;
+    }
+
+    private void NavWochennotizen_Click(object sender, RoutedEventArgs e)
+    {
+        NavSchueler.Tag = null;
+        NavTermine.Tag = null;
+        NavMonat.Tag = null;
+        NavZahlungen.Tag = null;
+        NavWochennotizen.Tag = "Active";
+        NavDrum.Tag = null;
+        PageSchueler.Visibility = Visibility.Collapsed;
+        PageTermine.Visibility = Visibility.Collapsed;
+        PageMonat.Visibility = Visibility.Collapsed;
+        PageZahlungen.Visibility = Visibility.Collapsed;
+        PageWochennotizen.Visibility = Visibility.Visible;
+        PageDrum.Visibility = Visibility.Collapsed;
+    }
+
+    private void NavDrum_Click(object sender, RoutedEventArgs e)
+    {
+        NavSchueler.Tag = null;
+        NavTermine.Tag = null;
+        NavMonat.Tag = null;
+        NavZahlungen.Tag = null;
+        NavWochennotizen.Tag = null;
+        NavDrum.Tag = "Active";
+        PageSchueler.Visibility = Visibility.Collapsed;
+        PageTermine.Visibility = Visibility.Collapsed;
+        PageMonat.Visibility = Visibility.Collapsed;
+        PageZahlungen.Visibility = Visibility.Collapsed;
+        PageWochennotizen.Visibility = Visibility.Collapsed;
+        PageDrum.Visibility = Visibility.Visible;
+    }
+
     public MainWindow()
     {
         InitializeComponent();
+        NavSchueler.Tag = "Active";
         Database.Initialize();
         InitializeComboBoxes();
         LoadSchueler();
@@ -56,9 +153,11 @@ public partial class MainWindow : Window
         CmbTerminMonat.SelectedIndex = DateTime.Now.Month - 1;
         for (int j = 2024; j <= 2030; j++)
         {
-            CmbJahr.Items.Add(j.ToString());
+            CmbTerminJahr.Items.Add(j.ToString());
+            CmbMonatJahr.Items.Add(j.ToString());
         }
-        CmbJahr.SelectedIndex = DateTime.Now.Year - 2024;
+        CmbTerminJahr.SelectedIndex = DateTime.Now.Year - 2024;
+        CmbMonatJahr.SelectedIndex = DateTime.Now.Year - 2024;
         _selectedMonth = DateTime.Now.Month;
         _selectedYear = DateTime.Now.Year;
         DatePickerZahlung.SelectedDate = DateTime.Now;
@@ -117,6 +216,74 @@ public partial class MainWindow : Window
         TxtNotizen.Text = "";
         CmbFixerWochentag.SelectedIndex = 0;
         TxtFixeUhrzeit.Text = "";
+    }
+
+    private void ContextNeuerTermin_Click(object sender, RoutedEventArgs e)
+    {
+        if (SchuelerListBox.SelectedItem is Schueler selectedSchueler)
+        {
+            NavTermine_Click(sender, e);
+            for (int i = 0; i < CmbTerminSchueler.Items.Count; i++)
+            {
+                if (CmbTerminSchueler.Items[i] is ComboBoxItem { Tag: var tag } && tag is int schuelerId && schuelerId == selectedSchueler.Id)
+                {
+                    CmbTerminSchueler.SelectedIndex = i;
+                    break;
+                }
+            }
+            DatePickerTermin.SelectedDate = DateTime.Now;
+        }
+    }
+
+    private void ContextZahlungErfassen_Click(object sender, RoutedEventArgs e)
+    {
+        if (SchuelerListBox.SelectedItem is Schueler selectedSchueler)
+        {
+            NavZahlungen_Click(sender, e);
+            for (int i = 0; i < CmbSchuelerZahlung.Items.Count; i++)
+            {
+                if (CmbSchuelerZahlung.Items[i] is ComboBoxItem { Tag: var tag } && tag is int schuelerId && schuelerId == selectedSchueler.Id)
+                {
+                    CmbSchuelerZahlung.SelectedIndex = i;
+                    break;
+                }
+            }
+            TxtBetrag.Focus();
+        }
+    }
+
+    private void ContextNotizHinzufuegen_Click(object sender, RoutedEventArgs e)
+    {
+        if (SchuelerListBox.SelectedItem is Schueler selectedSchueler)
+        {
+            NavWochennotizen_Click(sender, e);
+            for (int i = 0; i < CmbSchuelerWochennotiz.Items.Count; i++)
+            {
+                if (CmbSchuelerWochennotiz.Items[i] is ComboBoxItem { Tag: var tag } && tag is int schuelerId && schuelerId == selectedSchueler.Id)
+                {
+                    CmbSchuelerWochennotiz.SelectedIndex = i;
+                    break;
+                }
+            }
+            TxtNeueWochennotiz.Focus();
+        }
+    }
+
+    private void Window_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.N && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+        {
+            NeuerSchueler_Click(sender, e);
+            e.Handled = true;
+        }
+        if (e.Key == Key.S && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+        {
+            if (PageSchueler.Visibility == Visibility.Visible && _currentSchueler != null)
+            {
+                SchuelerSpeichern_Click(sender, e);
+            }
+            e.Handled = true;
+        }
     }
 
     private void SchuelerSpeichern_Click(object sender, RoutedEventArgs e)
@@ -240,17 +407,17 @@ public partial class MainWindow : Window
         if (CmbTerminMonat.SelectedIndex >= 0)
         {
             _selectedMonth = CmbTerminMonat.SelectedIndex + 1;
-            _selectedYear = int.Parse(CmbJahr.SelectedItem?.ToString() ?? DateTime.Now.Year.ToString());
+            _selectedYear = int.Parse(CmbTerminJahr.SelectedItem?.ToString() ?? DateTime.Now.Year.ToString());
             LoadTermineForCurrentMonth();
         }
     }
 
     private void CmbMonat_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        if (CmbMonat.SelectedIndex >= 0 && CmbJahr.SelectedIndex >= 0)
+        if (CmbMonat.SelectedIndex >= 0 && CmbMonatJahr.SelectedIndex >= 0)
         {
             _selectedMonth = CmbMonat.SelectedIndex + 1;
-            _selectedYear = int.Parse(CmbJahr.SelectedItem?.ToString() ?? DateTime.Now.Year.ToString());
+            _selectedYear = int.Parse(CmbMonatJahr.SelectedItem?.ToString() ?? DateTime.Now.Year.ToString());
             LoadMonatsuebersicht();
         }
     }

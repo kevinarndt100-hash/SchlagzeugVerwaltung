@@ -16,36 +16,35 @@ public class Database
         using var connection = new SqliteConnection(_connectionString);
         connection.Open();
 
-var command = connection.CreateCommand();
-command.CommandText = @"
-              CREATE TABLE IF NOT EXISTS DrumNotation (
-                  Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                  Name TEXT NOT NULL,
-                  Inhalt TEXT NOT NULL,
-                  SchuelerId INTEGER,
-                  CreatedAt TEXT NOT NULL
-              );
+        var command = connection.CreateCommand();
 
-              CREATE TABLE IF NOT EXISTS DrumNotationSchuelerMigrate (Id INTEGER PRIMARY KEY);
-              INSERT OR IGNORE INTO DrumNotationSchuelerMigrate VALUES (1);
-          ";
-        command.ExecuteNonQuery();
+        // Create tables if not exist
         command.CommandText = @"
-            PRAGMA table_info(DrumNotation);
-            INSERT OR IGNORE INTO DrumNotationSchuelerMigrate VALUES (1);
+            CREATE TABLE IF NOT EXISTS DrumNotation (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Name TEXT NOT NULL,
+                Inhalt TEXT NOT NULL,
+                SchuelerId INTEGER,
+                CreatedAt TEXT NOT NULL
+            );
         ";
         command.ExecuteNonQuery();
 
-        using var reader = command.ExecuteReader();
-        bool hasSchuelerId = false;
-        while (reader.Read())
-        {
-            if (reader.GetString(1) == "SchuelerId") hasSchuelerId = true;
-        }
+        // Migration: Add FixerWochentag and FixeUhrzeit to Schueler if not exist
+        command.CommandText = "PRAGMA table_info(Schueler)";
+        var reader = command.ExecuteReader();
+        var columns = new HashSet<string>();
+        while (reader.Read()) columns.Add(reader.GetString(1));
         reader.Close();
-        if (!hasSchuelerId)
+
+        if (!columns.Contains("FixerWochentag"))
         {
-            command.CommandText = "ALTER TABLE DrumNotation ADD COLUMN SchuelerId INTEGER";
+            command.CommandText = "ALTER TABLE Schueler ADD COLUMN FixerWochentag INTEGER DEFAULT 0";
+            command.ExecuteNonQuery();
+        }
+        if (!columns.Contains("FixeUhrzeit"))
+        {
+            command.CommandText = "ALTER TABLE Schueler ADD COLUMN FixeUhrzeit TEXT DEFAULT '00:00'";
             command.ExecuteNonQuery();
         }
     }
@@ -404,8 +403,9 @@ public static List<Termin> GetTermineForMonth(int month, int year)
         var command = connection.CreateCommand();
         if (id == 0)
         {
-            command.CommandText = "INSERT INTO DrumNotation (Name, Inhalt, SchuelerId) VALUES (@Name, @Inhalt, @SchuelerId)";
+            command.CommandText = "INSERT INTO DrumNotation (Name, Inhalt, SchuelerId, CreatedAt) VALUES (@Name, @Inhalt, @SchuelerId, @CreatedAt)";
             command.Parameters.AddWithValue("@SchuelerId", schuelerId ?? (object)DBNull.Value);
+            command.Parameters.AddWithValue("@CreatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
         }
         else
         {
